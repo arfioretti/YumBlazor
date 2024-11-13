@@ -1,0 +1,50 @@
+﻿@page "/category/create"
+
+@rendermode InteractiveServer
+
+@inject ICategoryRepository _categoryRepository
+@inject NavigationManager _navigationManager
+@inject IJSRuntime _JS
+
+<h3>Category Create</h3>
+
+<div class="col-12" offset-md-2 col-md-8 border>
+    <div class="mx-2 px-2">
+        <EditForm FormName="CategoryCreate" Model="Category" OnValidSubmit="HandleCategoryCreate" OnInvalidSubmit="HandleCategoryCreateInvalid">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <ValidationSummary></ValidationSummary>
+            <div class="form-group py-2">
+                Name
+                <InputText class="form-control" @bind-Value="@Category.Name" />
+                <ValidationMessage For="@(()=>Category.Name)"></ValidationMessage>
+            </div>
+            <div class="row mt-3">
+                <div class="col-6 col-md-3">
+                    <button type="submit" class="btn btn-primary my-3 form-control">
+                        <i class="bi bi-box-arrow-in-right"></i> Create
+                    </button>
+                </div>
+                <div class="col-6 md-3">
+                    <a href="categorylist" class="btn btn-secondary my-3 form-control">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+    private Category Category { get; set; } = new Category();
+
+    private async Task HandleCategoryCreate()
+    {
+        await _categoryRepository.CreateAsync(Category);
+        await _JS.ToastrSuccess("categoria criada");
+        _navigationManager.NavigateTo("categorylist");
+    }
+    private async Task HandleCategoryCreateInvalid()
+    {
+    }
+}

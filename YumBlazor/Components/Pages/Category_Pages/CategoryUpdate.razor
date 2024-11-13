@@ -1,0 +1,53 @@
+﻿@page "/category/update/{id:int}"
+
+@rendermode InteractiveServer
+
+@inject ICategoryRepository _categoryRepository
+@inject NavigationManager _navigationManager
+
+<h3>Category Update</h3>
+
+<div class="col-12" offset-md-2 col-md-8 border>
+    <div class="mx-2 px-2">
+        <EditForm FormName="CategoryUpdate" Model="Category" OnValidSubmit="HandleCategoryUpdate" OnInvalidSubmit="HandleCategoryUpdateInvalid">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <ValidationSummary></ValidationSummary>
+            <div class="form-group py-2">
+                Name
+                <InputText class="form-control" @bind-Value="@Category.Name" />
+            </div>
+            <div class="row mt-3">
+                <div class="col-6 col-md-3">
+                    <button type="submit" class="btn btn-primary my-3 form-control">
+                        <i class="bi bi-save"></i> Update
+                    </button>
+                </div>
+                <div class="col-6 md-3">
+                    <a href="categorylist" class="btn btn-secondary my-3 form-control">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Category Category { get; set; } = new Category();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Category = await _categoryRepository.GetAsync(Id);  
+    }
+    private async Task HandleCategoryUpdate()
+    {
+        await _categoryRepository.UpdateAsync(Category);
+        _navigationManager.NavigateTo("categorylist");
+    }
+    private async Task HandleCategoryUpdateInvalid()
+    {
+    }
+}
