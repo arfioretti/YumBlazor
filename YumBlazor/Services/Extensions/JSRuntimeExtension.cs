@@ -8,7 +8,7 @@ namespace YumBlazor.Services.Extensions
         {
             await jSRuntime.InvokeVoidAsync("showToastr", "success", message);
         }
-        public static async Task ToastrEerror(this IJSRuntime jSRuntime, string message)
+        public static async Task ToastrError(this IJSRuntime jSRuntime, string message)
         {
             await jSRuntime.InvokeVoidAsync("showToastr", "error", message);
         }

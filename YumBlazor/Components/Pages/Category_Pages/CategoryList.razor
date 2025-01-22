@@ -1,6 +1,13 @@
 ﻿@page "/categorylist"
 
 @inject ICategoryRepository _categoryRepository
+@inject IJSRuntime _JS
+
+<BsModal OnModalConfirmation="ConfirmDelete_Click"
+Title="@TitleText"
+ButtonStyle="btn-danger"
+ButtonText="Delete">
+</BsModal>
 
 @if(IsProcessing)
 {
@@ -41,12 +48,11 @@ else
                             <td>@cat.Name</td>
                             <td>
                                 <a href="@($"categoryupdate/{cat.Id}")" class="btn btn-primary"><i class="bi bi-pencil-square"></i>Update</a>
-                                <a href="@($"categorydelete/{cat.Id}")" class="btn btn-danger"><i class="bi bi-trash3"></i>Delete</a>
-
+                                @*                                 <a href="@($"categorydelete/{cat.Id}")" class="btn btn-danger"><i class="bi bi-trash3"></i>Delete</a>
+ *@                                <button class="btn btn-danger" @onclick="()=>HandleDelete(cat.Id, cat.Name)"><i class="bi bi-trash3"></i>Delete</button>
                             </td>
                         </tr>
                     }
-
                 </tbody>
 
             </table>
@@ -57,6 +63,8 @@ else
 @code {
     private bool IsProcessing { get; set; } = false;
     private IEnumerable<Category> Categories = new List<Category>();
+    private int DeleteCategoryId { get; set; } = 0;
+    public string TitleText { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,10 +72,39 @@ else
         // await Task.Delay(2000);
         await LoadCategory();
         IsProcessing = false;
-
     }
     private async Task  LoadCategory()
     {
         Categories = await _categoryRepository.GetAllAsync();
+    }
+    private async Task HandleDelete(int id, string name)
+    {
+        DeleteCategoryId = id;
+        TitleText = "Are you sur to delete Name:" + name;
+        await _JS.InvokeVoidAsync("ShowConfirmationModal");
+
+    }
+
+    private async Task ConfirmDelete_Click(bool isConfirmed)
+    {
+        IsProcessing = true;
+        await _JS.InvokeVoidAsync("HideConfirmationModal"); //micado
+
+        if (isConfirmed && DeleteCategoryId != 0)
+        {
+            var result = await _categoryRepository.DeleteAsync(DeleteCategoryId);
+            if(result)
+            {
+                _JS.ToastrSuccess("Category Delete successfully");
+                await LoadCategory();
+            }
+            else
+            {
+                _JS.ToastrError("delete failure");
+            }
+        }
+
+        DeleteCategoryId = 0;
+        IsProcessing = false;
     }
 }

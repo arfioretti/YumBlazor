@@ -1,4 +1,6 @@
-﻿window.showToastr = function (type, message) {
+﻿
+
+window.showToastr = function (type, message) {
     if (type == "success") {
         toastr.success(message);
     }
