@@ -1,10 +1,12 @@
-﻿namespace YumBlazor.Repository
+﻿using YumBlazor.Data;
+
+namespace YumBlazor.Repository
 {
     public interface IShoppingCartRepository
     {
-        public async Task<bool> UpdateCartAsync(string userId, int product, int updateBy);
-        public async Task<IEnumerable<IShoppingCartRepository>> GetAllAsync(string? userId);
-        public async Task<bool> ClearCartAsync(string? userId);
+        public Task<bool> UpdateCartAsync(string userId, int product, int updateBy);
+        public Task<IEnumerable<ShoppingCart>> GetAllAsync(string? userId);
+        public Task<bool> ClearCartAsync(string? userId);
     }
 }
 

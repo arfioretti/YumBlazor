@@ -42,13 +42,14 @@ namespace YumBlazor.Repository
             }
             else
             {
-                cart.Count = updateBy;
+                cart.Count += updateBy;
                 if (cart.Count <= 0)
                 {
                     _db.ShoppingCarts.Remove(cart);
                 }
             }
-            return await _db.SaveChangesAsync() > 0;
+            await _db.SaveChangesAsync();
+            return true;
         }
     }
 }
